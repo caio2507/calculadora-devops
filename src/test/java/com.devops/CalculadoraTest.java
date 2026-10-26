@@ -16,4 +16,10 @@ public class CalculadoraTest {
         Calculadora calc = new Calculadora();
         assertEquals(1, calc.subtrair(3, 2));
     }
+
+    @Test
+    public void testMultiplicar() {
+        Calculadora calc = new Calculadora();
+        assertEquals(6, calc.multiplicar(2, 3));
+    }
 }
