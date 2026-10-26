@@ -2,6 +2,7 @@ package com.devops;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CalculadoraTest {
 
@@ -21,5 +22,19 @@ public class CalculadoraTest {
     public void testMultiplicar() {
         Calculadora calc = new Calculadora();
         assertEquals(6, calc.multiplicar(2, 3));
+    }
+
+    @Test
+    public void testDividirSucesso() {
+        Calculadora calc = new Calculadora();
+        assertEquals(2.5, calc.dividir(5.0, 2.0));
+    }
+
+    @Test
+    public void testDividirPorZeroExcecao() {
+        Calculadora calc = new Calculadora();
+        assertThrows(IllegalArgumentException.class, () -> {
+            calc.dividir(10.0, 0.0);
+        });
     }
 }
