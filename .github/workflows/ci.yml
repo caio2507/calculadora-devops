@@ -56,8 +56,10 @@ jobs:
 
       - name: Subir aplicação web com servidor nativo do Java 21
         run: |
-          jwebserver -p 8080 -d src/main/resources/static &
-          sleep 3
+            mkdir -p src/main/resources/static
+            nohup jwebserver -b 0.0.0.0 -p 8080 -d src/main/resources/static > server.log 2>&1 &
+            sleep 5
+            curl -I http://localhost:8080
 
       - name: Executar validação DAST (OWASP ZAP)
         uses: zaproxy/action-baseline@v0.12.0
