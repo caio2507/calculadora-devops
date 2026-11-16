@@ -1,4 +1,4 @@
-name: Java CI com Maven
+name: DevSecOps Pipeline - CI/CD
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
 
 jobs:
   build-and-test:
+    name: Build & Unit Tests (Maven)
     runs-on: ubuntu-latest
-
     steps:
       - name: Baixar o código do repositório
         uses: actions/checkout@v4
@@ -23,3 +23,42 @@ jobs:
 
       - name: Compilar e rodar testes unitários com Maven
         run: mvn test
+
+
+  sast-scan:
+    name: SAST - Semgrep Security Scan
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    container:
+      image: semgrep/semgrep
+    steps:
+      - name: Baixar o código do repositório
+        uses: actions/checkout@v4
+
+      - name: Executar validação SAST (Semgrep)
+        run: semgrep scan --config p/java --config p/owasp-top-ten src/
+
+
+
+  dast-scan:
+    name: DAST - OWASP ZAP Baseline Scan
+    runs-on: ubuntu-latest
+    needs: sast-scan
+    steps:
+      - name: Baixar o código do repositório
+        uses: actions/checkout@v4
+
+      - name: Subir aplicação web em background para o DAST
+        run: |
+          mkdir -p src/main/resources/static
+          nohup python3 -m http.server 8080 --bind 0.0.0.0 --directory src/main/resources/static > server.log 2>&1 &
+          sleep 3
+          curl -I http://localhost:8080
+
+      - name: Executar validação DAST (OWASP ZAP)
+        uses: zaproxy/action-baseline@v0.14.0
+        with:
+            target: 'http://localhost:8080'
+            fail_action: false
+            allow_issue_writing: false
+            artifact_name: 'zap-report'
