@@ -48,19 +48,12 @@ jobs:
       - name: Baixar o código do repositório
         uses: actions/checkout@v4
 
-      - name: Configurar o Java (JDK 21)
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-
-      - name: Subir aplicação web com servidor nativo do Java 21
+      - name: Subir aplicação web em background para o DAST
         run: |
-            mkdir -p src/main/resources/static
-            nohup jwebserver -b 0.0.0.0 -p 8080 -d "$(pwd)/src/main/resources/static" > server.log 2>&1 &
-            sleep 3
-            cat server.log
-            curl -I http://localhost:8080
+          mkdir -p src/main/resources/static
+          nohup python3 -m http.server 8080 --bind 0.0.0.0 --directory src/main/resources/static > server.log 2>&1 &
+          sleep 3
+          curl -I http://localhost:8080
 
       - name: Executar validação DAST (OWASP ZAP)
         uses: zaproxy/action-baseline@v0.12.0
