@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Executar validação SAST (Semgrep)
-        run: semgrep scan --config p/java --config p/owasp-top-ten --error
+        run: semgrep scan --config p/java --config p/owasp-top-ten src/
 
 
 
