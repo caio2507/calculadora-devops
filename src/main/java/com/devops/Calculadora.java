@@ -2,7 +2,7 @@ package com.devops;
 
 public class Calculadora {
 
-    public int somar(int a, int b) {
+    public int somar(int a, int a) {
         return a + b;
     }
 
